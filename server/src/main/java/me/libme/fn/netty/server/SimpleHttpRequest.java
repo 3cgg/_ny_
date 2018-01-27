@@ -6,10 +6,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import me.libme.fn.netty.msg.HeaderNames;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by J on 2017/9/7.
@@ -112,6 +109,18 @@ public class SimpleHttpRequest implements HttpRequest {
         }else{
             throw new RuntimeException("more than one value found.");
         }
+    }
+
+    @Override
+    public boolean containsParam(String name) {
+        return queryStrings.containsKey(name)||form.containsKey(name);
+    }
+
+    @Override
+    public Collection<String> paramNames() {
+        Collection<String> collection=new ArrayList<>(queryStrings.keySet());
+        collection.addAll(form.keySet());
+        return Collections.unmodifiableCollection(collection);
     }
 
     @Override

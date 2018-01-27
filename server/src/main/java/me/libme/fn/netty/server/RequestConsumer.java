@@ -5,6 +5,8 @@ import me.libme.xstream.Compositer;
 import me.libme.xstream.ConsumerMeta;
 import me.libme.xstream.FlexTupe;
 import me.libme.xstream.Tupe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 
@@ -12,6 +14,8 @@ import java.nio.charset.Charset;
  * Created by J on 2018/1/18.
  */
 public class RequestConsumer extends Compositer {
+
+    private static final Logger logger= LoggerFactory.getLogger(RequestConsumer.class);
 
     {
         consumerMeta = new ConsumerMeta();
@@ -79,6 +83,7 @@ public class RequestConsumer extends Compositer {
                 httpResponse.write("OK".getBytes(Charset.forName("utf-8")));
             }
         }catch (Exception e){
+            logger.error(e.getMessage(),e);
             httpRequest.getHttpResponse().write("sever error.".getBytes(Charset.forName("utf-8")));
         }
 

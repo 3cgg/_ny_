@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>libme.modules</groupId>
-    <artifactId>ny-all</artifactId>
+    <artifactId>netty-all</artifactId>
     <packaging>pom</packaging>
     <version>1.0.1</version>
 

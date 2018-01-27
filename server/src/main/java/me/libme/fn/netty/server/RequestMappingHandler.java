@@ -5,6 +5,6 @@ package me.libme.fn.netty.server;
  */
 public interface RequestMappingHandler {
 
-    Object handle(HttpRequest httpRequest);
+    Object handle(HttpRequest httpRequest) throws Exception;
 
 }

@@ -1,7 +1,10 @@
 package test.me.libme.fn.netty.server;
 
+import me.libme.fn.netty.server.HttpRequest;
 import me.libme.fn.netty.server.ServerConfig;
 import me.libme.fn.netty.server.SimpleHttpNioChannelServer;
+import me.libme.fn.netty.server.fn._dispatch.PathListener;
+import me.libme.fn.netty.server.fn._dispatch.SimpleRequestMappingDispather;
 import me.libme.kernel._c.json.JJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +27,23 @@ public class TestServer {
         serverConfig.setLoopThread(1);
         serverConfig.setWorkerThread(Runtime.getRuntime().availableProcessors());
 
+        SimpleRequestMappingDispather dispather=new SimpleRequestMappingDispather();
+
+        dispather.register("/_test4netty_/name", new PathListener() {
+            public String name(String name){
+                return name;
+            }
+        }).register("/info", new PathListener() {
+            public String info(String name, int age,HttpRequest httpRequest){
+                httpRequest.paramNames().forEach(key-> LOGGER.info(key));
+                return name+"-"+age;
+            }
+        });
+
+
         // START SERVER
         SimpleHttpNioChannelServer channelServer =
-                new SimpleHttpNioChannelServer(serverConfig,request->{
-                    if(request.getPath().equals("/_test4netty_/name")){
-                        return "receive!";
-                    }else{
-                        return "aha....";
-                    }
-
-                });
+                new SimpleHttpNioChannelServer(serverConfig,dispather);
         try {
             channelServer.start();
             LOGGER.info("Host ["+serverConfig.getHost()+"] listen on port : "+serverConfig.getPort()+", params : "+ JJSON.get().format(serverConfig));
