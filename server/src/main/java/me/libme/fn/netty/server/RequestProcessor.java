@@ -13,11 +13,19 @@ public class RequestProcessor {
 
     private RequestProcessorBuilder recProcessorBuilder;
 
+    private WindowTopology windowTopology;
+
     private RequestProcessor(){}
 
     public static RequestProcessorBuilder builder(){
         return new RequestProcessorBuilder();
     }
+
+
+    public void shutdown(){
+        windowTopology.shutdown();
+    }
+
 
     public void start(){
 
@@ -33,7 +41,8 @@ public class RequestProcessor {
             windowBuilder.addOperation(operationProvider.provide());
         }
 
-        windowBuilder.build().start();
+        windowTopology=windowBuilder.build();
+        windowTopology.start();
 
     }
 

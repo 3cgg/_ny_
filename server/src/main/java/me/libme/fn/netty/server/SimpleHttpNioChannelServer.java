@@ -37,6 +37,8 @@ public class SimpleHttpNioChannelServer implements Closeable {
 
 	private final RequestMappingHandler requestMappingHandler;
 
+	private RequestProcessor requestProcessor;
+
 	public SimpleHttpNioChannelServer(ServerConfig serverConfig,boolean useSSL,RequestMappingHandler requestMappingHandler) {
 		this.serverConfig = serverConfig;
 		this.useSSL = useSSL;
@@ -85,10 +87,11 @@ public class SimpleHttpNioChannelServer implements Closeable {
 			LOGGER.info("Open your web browser and navigate to " +
                     (useSSL? "https" : "http") + "://"+serverConfig.getHost()+":" + serverConfig.getPort() + '/');
 
-			RequestProcessor.builder()
+			requestProcessor=RequestProcessor.builder()
 					.setQueueHolder(SimpleRequestHandler.queueHolder)
 					.addConsumerProider(()->new RequestConsumer(requestMappingHandler))
-					.build().start();
+					.build();
+			requestProcessor.start();
 
         } catch (Exception e){
         	LOGGER.error(e.getMessage(), e);
@@ -102,6 +105,7 @@ public class SimpleHttpNioChannelServer implements Closeable {
 	public void close() throws IOException {
 		bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
+		requestProcessor.shutdown();
 	}
 	
 }
