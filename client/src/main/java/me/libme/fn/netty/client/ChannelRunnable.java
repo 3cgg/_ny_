@@ -69,8 +69,8 @@ public abstract class ChannelRunnable {
 			LOGGER.info("completely send message ["+request.getHeader(HeaderNames.SEQUENCE_IDENTITY)+" ; " +
 					request.getUrl()+" ], release channel to pool : " +channel);
 			return channelFuture;
-		}catch (Exception e) {
-			e.printStackTrace();
+		}catch (Throwable e) {
+			LOGGER.error(e.getMessage(),e);
 			throw new RuntimeException(e);
 		}
 	}
