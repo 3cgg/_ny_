@@ -4,7 +4,7 @@ import me.libme.fn.netty.server.HttpRequest;
 import me.libme.fn.netty.server.ServerConfig;
 import me.libme.fn.netty.server.SimpleHttpNioChannelServer;
 import me.libme.fn.netty.server.fn._dispatch.PathListener;
-import me.libme.fn.netty.server.fn._dispatch.SimpleRequestMappingDispather;
+import me.libme.fn.netty.server.fn._dispatch.SimpleRequestMappingDispatcher;
 import me.libme.kernel._c.json.JJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +27,9 @@ public class TestServer {
         serverConfig.setLoopThread(1);
         serverConfig.setWorkerThread(Runtime.getRuntime().availableProcessors());
 
-        SimpleRequestMappingDispather dispather=new SimpleRequestMappingDispather();
+        SimpleRequestMappingDispatcher dispatcher=new SimpleRequestMappingDispatcher();
 
-        dispather.register("/_test4netty_/name", new PathListener() {
+        dispatcher.register("/_test4netty_/name", new PathListener() {
             public String name(String name){
                 return name;
             }
@@ -43,7 +43,7 @@ public class TestServer {
 
         // START SERVER
         SimpleHttpNioChannelServer channelServer =
-                new SimpleHttpNioChannelServer(serverConfig,dispather);
+                new SimpleHttpNioChannelServer(serverConfig,dispatcher);
         try {
             channelServer.start();
             LOGGER.info("Host ["+serverConfig.getHost()+"] listen on port : "+serverConfig.getPort()+", params : "+ JJSON.get().format(serverConfig));
