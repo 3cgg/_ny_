@@ -29,11 +29,11 @@ public class TestServer {
 
         SimpleRequestMappingDispatcher dispatcher=new SimpleRequestMappingDispatcher();
 
-        dispatcher.register("/_test4netty_/name", new PathListener() {
+        dispatcher.register("/demo/_test4netty_/name", new PathListener() {
             public String name(String name){
                 return name;
             }
-        }).register("/info", new PathListener() {
+        }).register("/demo/info", new PathListener() {
             public String info(String name, int age,HttpRequest httpRequest){
                 httpRequest.paramNames().forEach(key-> LOGGER.info(key));
                 return name+"-"+age;

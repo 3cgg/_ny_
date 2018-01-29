@@ -2,7 +2,7 @@ package me.libme.fn.netty.client;
 
 import java.io.IOException;
 
-public class SimpleChannelExecutor implements ChannelExecutor<NioChannelRunnable> {
+public class SimpleChannelExecutor implements ChannelExecutor<NioChannelRunnable> ,ClientChannelExecutor<NioChannelRunnable>{
 
 	private NioChannelExecutor nioChannelExecutor;
 
@@ -17,7 +17,7 @@ public class SimpleChannelExecutor implements ChannelExecutor<NioChannelRunnable
 		return nioChannelExecutor.execute(channelRunnable);
 	}
 	
-	boolean ssl(){
+	public boolean ssl(){
 		SimpleHttpClientInitializer simpleHttpClientInitializer=(SimpleHttpClientInitializer)nioChannelExecutor.getClientInitializer();
     	return simpleHttpClientInitializer.ssl();
     }
@@ -30,5 +30,14 @@ public class SimpleChannelExecutor implements ChannelExecutor<NioChannelRunnable
 	public void close() throws IOException {
 		nioChannelExecutor.close();
 	}
-	
+
+	@Override
+	public String host() {
+		return nioChannelExecutor.getHost();
+	}
+
+	@Override
+	public int port() {
+		return nioChannelExecutor.getPort();
+	}
 }
