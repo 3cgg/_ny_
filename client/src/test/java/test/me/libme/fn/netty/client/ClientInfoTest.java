@@ -3,11 +3,13 @@ package test.me.libme.fn.netty.client;
 import me.libme.fn.netty.client.SimpleChannelExecutor;
 import me.libme.fn.netty.client.SimpleClientFactory;
 import me.libme.fn.netty.msg.BodyDecoder;
+import me.libme.kernel._c.json.JJSON;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,9 +38,11 @@ public class ClientInfoTest {
     public void call(){
 
         Info info= SimpleClientFactory.factory(Info.class,"/demo/info",simpleChannelExecutor);
+        MapInfo mapInfo= SimpleClientFactory.factory(MapInfo.class,"/demo/map",simpleChannelExecutor);
 
 
         for(int i=0;i<1;i++){
+            LOGGER.debug("AHA : "+i);
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -49,6 +53,9 @@ public class ClientInfoTest {
                     String value=info.info(name,age,null);
 
                     LOGGER.info("response : " + value + "; request : " + name);
+
+                    Map<String,Object> map= mapInfo.info(name,age,null);
+                    LOGGER.info("object : "+ JJSON.get().format(map));
 
                 }
             });

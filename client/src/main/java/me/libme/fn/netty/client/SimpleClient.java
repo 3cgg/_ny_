@@ -25,17 +25,18 @@ public class SimpleClient implements InvocationHandler {
 
     private final String path;
 
-    private final BodyDecoder bodyDecoder;
+    private final BodyDecoderProvider bodyDecoderProvider;
 
+    private final static _JSON JSON=new _JSON();
 
-    public SimpleClient(ClientChannelExecutor<NioChannelRunnable> channelExecutor, String path, BodyDecoder bodyDecoder) {
+    public SimpleClient(ClientChannelExecutor<NioChannelRunnable> channelExecutor, String path, BodyDecoderProvider bodyDecoderProvider) {
         this.channelExecutor = channelExecutor;
         this.path = path;
-        this.bodyDecoder = bodyDecoder;
+        this.bodyDecoderProvider = bodyDecoderProvider;
     }
 
     public SimpleClient(ClientChannelExecutor<NioChannelRunnable> channelExecutor, String path) {
-        this(channelExecutor,path,new BodyDecoder.SimpleJSONDecoder(String.class));
+        this(channelExecutor,path,JSON);
     }
 
     private FormMsgBody append(Class<?> _clazz,Object object,FormMsgBody formMsgBody){
@@ -61,6 +62,8 @@ public class SimpleClient implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+        if(!method.getDeclaringClass().isInterface()) return null;  // we only send request to server when calling method of an interface
+
         SimpleRequest simpleRequest = SimpleRequest.post();
         simpleRequest.setUrl(channelExecutor.uri() + path);
         FormMsgBody formMsgBody = new FormMsgBody();
@@ -83,7 +86,7 @@ public class SimpleClient implements InvocationHandler {
         try {
             CallPromise callPromise = channelExecutor.execute(new NioChannelRunnable(simpleRequest));
             IResponse response = (IResponse) callPromise.get();
-            Object result = response.decode(bodyDecoder);
+            Object result = response.decode(bodyDecoderProvider.provide(proxy, method, args));
             return result;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(),e);
@@ -91,5 +94,20 @@ public class SimpleClient implements InvocationHandler {
         return null;
     }
 
+
+    public interface BodyDecoderProvider{
+        BodyDecoder provide(Object proxy, Method method, Object[] args);
+    }
+
+
+    private static class _JSON implements BodyDecoderProvider{
+
+        @Override
+        public BodyDecoder provide(Object proxy, Method method, Object[] args) {
+            return new BodyDecoder.SimpleJSONDecoder(method.getReturnType());
+        }
+
+
+    }
 
 }

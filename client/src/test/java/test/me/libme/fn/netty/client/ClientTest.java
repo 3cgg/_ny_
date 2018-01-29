@@ -9,7 +9,6 @@ import me.libme.fn.netty.client.SimpleRequest;
 import me.libme.fn.netty.client.msg.FormMsgBody;
 import me.libme.fn.netty.client.msg.IResponse;
 import me.libme.fn.netty.msg.BodyDecoder;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -48,7 +47,7 @@ public class ClientTest {
                 @Override
                 public void run() {
                     SimpleRequest simpleRequest = SimpleRequest.post();
-                    simpleRequest.setUrl(simpleChannelExecutor.uri() + "/_test4netty_/name");
+                    simpleRequest.setUrl(simpleChannelExecutor.uri() + "/demo/_test4netty_/name");
                     FormMsgBody formMsgBody = new FormMsgBody();
                     final String name = "J-" + new Random().nextInt(9999);
                     formMsgBody.addEntry("name", name);

@@ -74,7 +74,9 @@ public class FormMsgBody implements IMessageBody {
         String data="";
         for(Entry entry:entries.values()){
             try {
-                data=data+"&"+entry.name+"="+ URLEncoder.encode(JJSON.get().format(entry.value),"utf-8");
+                data=data+"&"+entry.name+"="+ URLEncoder.encode(
+                        String.class.isInstance(entry.value)? (String) entry.value:
+                        JJSON.get().format(entry.value),"utf-8");
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }

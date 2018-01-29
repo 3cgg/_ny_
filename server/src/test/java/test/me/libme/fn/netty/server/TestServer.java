@@ -6,10 +6,14 @@ import me.libme.fn.netty.server.SimpleHttpNioChannelServer;
 import me.libme.fn.netty.server.fn._dispatch.PathListener;
 import me.libme.fn.netty.server.fn._dispatch.SimpleRequestMappingDispatcher;
 import me.libme.kernel._c.json.JJSON;
+import me.libme.kernel._c.util.JDateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by J on 2018/1/27.
@@ -37,6 +41,15 @@ public class TestServer {
             public String info(String name, int age,HttpRequest httpRequest){
                 httpRequest.paramNames().forEach(key-> LOGGER.info(key));
                 return name+"-"+age;
+            }
+        }).register("/demo/map", new PathListener() {
+            public Map<String,Object> mapInfo(String name,int age,HttpRequest httpRequest){
+                Map<String,Object> map=new HashMap<>();
+                map.put("name",name);
+                map.put("age",age);
+                map.put("time", JDateUtils.formatWithSeconds(new Date()));
+                map.put("server", true);
+                return map;
             }
         });
 
