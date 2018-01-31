@@ -5,6 +5,7 @@ import me.libme.kernel._c._m.JModel;
 
 /**
  * Created by J on 2017/9/7.
+ * @see RequestProcessor
  */
 public class ServerConfig implements JModel {
 
@@ -15,6 +16,34 @@ public class ServerConfig implements JModel {
     private int loopThread;
 
     private int workerThread;
+
+    /*
+     window batch begin config  see RequestProcessor
+    */
+
+    private int windowCount=10 ;
+
+    private int windowTime=1*100; //millisecond
+
+    /*
+     window batch end config
+    */
+
+    public int getWindowCount() {
+        return windowCount;
+    }
+
+    public void setWindowCount(int windowCount) {
+        this.windowCount = windowCount;
+    }
+
+    public int getWindowTime() {
+        return windowTime;
+    }
+
+    public void setWindowTime(int windowTime) {
+        this.windowTime = windowTime;
+    }
 
     public String getHost() {
         return host;
@@ -47,5 +76,7 @@ public class ServerConfig implements JModel {
     public void setPort(int port) {
         this.port = port;
     }
+
+
 
 }

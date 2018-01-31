@@ -88,6 +88,8 @@ public class SimpleHttpNioChannelServer implements Closeable {
                     (useSSL? "https" : "http") + "://"+serverConfig.getHost()+":" + serverConfig.getPort() + '/');
 
 			requestProcessor=RequestProcessor.builder()
+					.setCount(serverConfig.getWindowCount())
+					.setTime(serverConfig.getWindowTime())
 					.setQueueHolder(SimpleRequestHandler.queueHolder)
 					.addConsumerProider(()->new RequestConsumer(requestMappingHandler))
 					.build();
