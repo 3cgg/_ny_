@@ -14,6 +14,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * Created by J on 2018/1/27.
@@ -21,7 +25,19 @@ import java.util.Map;
 public class TestServer {
 
 
+
     private static final Logger LOGGER= LoggerFactory.getLogger(TestServer.class);
+
+
+    private static ScheduledExecutorService windowExecutor= Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors(), new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            return new Thread(r,"window-topology-scheduler");
+        }
+    });
+
+    private static ExecutorService executor=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), r->new Thread(r,"real thread on executing topology"));
+
 
     public static void main(String[] args) {
 
@@ -56,7 +72,9 @@ public class TestServer {
 
         // START SERVER
         SimpleHttpNioChannelServer channelServer =
-                new SimpleHttpNioChannelServer(serverConfig,dispatcher);
+                new SimpleHttpNioChannelServer(serverConfig,dispatcher)
+                .windowExecutor(windowExecutor)
+                .executor(executor);
         try {
             channelServer.start();
             LOGGER.info("Host ["+serverConfig.getHost()+"] listen on port : "+serverConfig.getPort()+", params : "+ JJSON.get().format(serverConfig));

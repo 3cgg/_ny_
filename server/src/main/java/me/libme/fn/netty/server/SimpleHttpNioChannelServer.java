@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,6 +40,30 @@ public class SimpleHttpNioChannelServer implements Closeable {
 	private final RequestMappingHandler requestMappingHandler;
 
 	private RequestProcessor requestProcessor;
+
+	private ScheduledExecutorService windowExecutor;
+
+	private ExecutorService executor;
+
+	/**
+	 * !important / micro-batch
+	 * @param windowExecutor
+	 * @return
+	 */
+	public SimpleHttpNioChannelServer windowExecutor(ScheduledExecutorService windowExecutor) {
+		this.windowExecutor = windowExecutor;
+		return this;
+	}
+
+	/**
+	 * !important / executing thread pool
+	 * @param executor
+	 * @return
+	 */
+	public SimpleHttpNioChannelServer executor(ExecutorService executor) {
+		this.executor = executor;
+		return this;
+	}
 
 	public SimpleHttpNioChannelServer(ServerConfig serverConfig,boolean useSSL,RequestMappingHandler requestMappingHandler) {
 		this.serverConfig = serverConfig;
@@ -90,6 +116,8 @@ public class SimpleHttpNioChannelServer implements Closeable {
 			requestProcessor=RequestProcessor.builder()
 					.setCount(serverConfig.getWindowCount())
 					.setTime(serverConfig.getWindowTime())
+					.windowExecutor(windowExecutor)
+					.executor(executor)
 					.setQueueHolder(SimpleRequestHandler.queueHolder)
 					.addConsumerProider(()->new RequestConsumer(requestMappingHandler))
 					.build();

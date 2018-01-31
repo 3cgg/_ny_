@@ -4,6 +4,8 @@ import me.libme.xstream.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Created by J on 2018/1/20.
@@ -34,6 +36,8 @@ public class RequestProcessor {
         WindowTopology.WindowBuilder windowBuilder=WindowTopology.builder().setName("Request Handler Topology")
                 .setCount(recProcessorBuilder.count)
                 .setTime(recProcessorBuilder.time)
+                .windowExecutor(recProcessorBuilder.windowExecutor)
+                .executor(recProcessorBuilder.executor)
                 .setSourcer(queueWindowSourcer);
 
 
@@ -58,6 +62,30 @@ public class RequestProcessor {
         private int count=1000 ;
 
         private int time=1*1000; //millisecond
+
+        private ScheduledExecutorService windowExecutor;
+
+        private ExecutorService executor;
+
+        /**
+         * !important / micro-batch
+         * @param windowExecutor
+         * @return
+         */
+        public RequestProcessorBuilder windowExecutor(ScheduledExecutorService windowExecutor) {
+            this.windowExecutor = windowExecutor;
+            return this;
+        }
+
+        /**
+         * !important / executing thread pool
+         * @param executor
+         * @return
+         */
+        public RequestProcessorBuilder executor(ExecutorService executor) {
+            this.executor = executor;
+            return this;
+        }
 
         public RequestProcessorBuilder setQueueHolder(QueueHolder queueHolder) {
             this.queueHolder = queueHolder;
