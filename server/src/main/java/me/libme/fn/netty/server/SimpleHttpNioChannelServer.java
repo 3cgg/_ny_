@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -76,7 +77,10 @@ public class SimpleHttpNioChannelServer implements Closeable {
 	}
 	
 	public void start() throws Exception{
-		
+
+		Objects.requireNonNull(windowExecutor);
+		Objects.requireNonNull(executor);
+
 		 // Configure SSL.
         final SslContext sslCtx;
         if (useSSL) {
@@ -136,6 +140,8 @@ public class SimpleHttpNioChannelServer implements Closeable {
 		bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
 		requestProcessor.shutdown();
+		windowExecutor.shutdown();
+		executor.shutdown();
 	}
 	
 }
