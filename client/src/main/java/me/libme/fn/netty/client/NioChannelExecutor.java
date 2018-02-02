@@ -13,6 +13,7 @@ import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GenericFutureListener;
 import me.libme.fn.netty.msg.HeaderNames;
 import me.libme.kernel._c.util.JUniqueUtils;
+import me.libme.kernel._c.util.ThreadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,13 +56,8 @@ public class NioChannelExecutor implements ChannelExecutor<NioChannelRunnable>{
 	NioChannelExecutor connect() {
 		try {
 			// Configure the client.
+			int threadCount= ThreadUtil.recommendCount();
 			int availableProcessors=Runtime.getRuntime().availableProcessors();
-			int threadCount;
-			if(availableProcessors<3){
-				threadCount=availableProcessors*8;
-			}else{
-				threadCount=availableProcessors*5;
-			}
 			LOGGER.info("availableProcessors : "+availableProcessors+"  netty-client-io-thread-count : "+threadCount);
 			EventLoopGroup group = new NioEventLoopGroup(threadCount,new ThreadFactory() {
 				@Override
