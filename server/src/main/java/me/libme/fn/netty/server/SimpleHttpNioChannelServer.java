@@ -11,6 +11,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import me.libme.xstream.ConsumerMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +124,7 @@ public class SimpleHttpNioChannelServer implements Closeable {
 					.windowExecutor(windowExecutor)
 					.executor(executor)
 					.setQueueHolder(SimpleRequestHandler.queueHolder)
-					.addConsumerProider(()->new RequestConsumer(requestMappingHandler))
+					.addConsumerProider(()->new RequestConsumer(new ConsumerMeta("Internal Request Dispatcher"),requestMappingHandler))
 					.build();
 			requestProcessor.start();
 

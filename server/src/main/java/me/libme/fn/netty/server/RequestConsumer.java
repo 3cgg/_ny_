@@ -1,11 +1,15 @@
 package me.libme.fn.netty.server;
 
 import me.libme.kernel._c.json.JJSON;
-import me.libme.xstream.*;
+import me.libme.xstream.Compositer;
+import me.libme.xstream.ConsumerMeta;
+import me.libme.xstream.EntryTupe;
+import me.libme.xstream.Tupe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
+import java.util.Iterator;
 
 /**
  * Created by J on 2018/1/18.
@@ -14,14 +18,10 @@ public class RequestConsumer extends Compositer {
 
     private static final Logger logger= LoggerFactory.getLogger(RequestConsumer.class);
 
-    {
-        consumerMeta = new ConsumerMeta();
-        consumerMeta.setName("Internal Request Dispatcher");
-    }
-
     private final RequestMappingHandler requestMappingHandler;
 
-    public RequestConsumer(RequestMappingHandler requestMappingHandler) {
+    public RequestConsumer(ConsumerMeta consumerMeta,RequestMappingHandler requestMappingHandler) {
+        super(consumerMeta);
         this.requestMappingHandler = requestMappingHandler;
     }
 
@@ -31,10 +31,11 @@ public class RequestConsumer extends Compositer {
     }
 
     @Override
-    protected void doConsume(Tupe tupe,TupeContext tupeContext) throws Exception {
+    protected void doConsume(Tupe tupe) throws Exception {
         HttpRequest httpRequest=null;
-        while (tupe.hasNext()) {
-            httpRequest=(HttpRequest) tupe.next();
+        Iterator<EntryTupe.Entry> iterator=tupe.iterator();
+        if (iterator.hasNext()) {
+            httpRequest=(HttpRequest) iterator.next().getValue();
         }
         try{
             Object result=requestMappingHandler.handle(httpRequest);
