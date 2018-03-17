@@ -102,5 +102,17 @@
     </modules>
 
 
+    <distributionManagement>
+        <repository>
+            <id>nexus-3cgg-release</id>
+            <name>Nexus 3cgg</name>
+            <url>http://localhost:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-3cgg-snapshots</id>
+            <name>Nexus 3cgg</name>
+            <url>http://localhost:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
