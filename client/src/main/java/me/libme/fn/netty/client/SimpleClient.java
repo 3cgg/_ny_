@@ -23,20 +23,28 @@ public class SimpleClient implements InvocationHandler {
 
     private final ClientChannelExecutor<NioChannelRunnable> channelExecutor;
 
-    private final String path;
+    private final PathGenerator pathGenerator;
 
     private final BodyDecoderProvider bodyDecoderProvider;
 
     private final static _JSON JSON=new _JSON();
 
-    public SimpleClient(ClientChannelExecutor<NioChannelRunnable> channelExecutor, String path, BodyDecoderProvider bodyDecoderProvider) {
+    public SimpleClient(ClientChannelExecutor<NioChannelRunnable> channelExecutor, PathGenerator pathGenerator, BodyDecoderProvider bodyDecoderProvider) {
         this.channelExecutor = channelExecutor;
-        this.path = path;
+        this.pathGenerator = pathGenerator;
         this.bodyDecoderProvider = bodyDecoderProvider;
+    }
+
+    public SimpleClient(ClientChannelExecutor<NioChannelRunnable> channelExecutor, String path, BodyDecoderProvider bodyDecoderProvider) {
+        this(channelExecutor, new DirectPath(path),bodyDecoderProvider);
     }
 
     public SimpleClient(ClientChannelExecutor<NioChannelRunnable> channelExecutor, String path) {
         this(channelExecutor,path,JSON);
+    }
+
+    public SimpleClient(ClientChannelExecutor<NioChannelRunnable> channelExecutor, PathGenerator pathGenerator) {
+        this(channelExecutor,pathGenerator,JSON);
     }
 
     private FormMsgBody append(Class<?> _clazz,Object object,FormMsgBody formMsgBody){
@@ -65,7 +73,7 @@ public class SimpleClient implements InvocationHandler {
         if(!method.getDeclaringClass().isInterface()) return null;  // we only send request to server when calling method of an interface
 
         SimpleRequest simpleRequest = SimpleRequest.post();
-        simpleRequest.setUrl(channelExecutor.uri() + path);
+        simpleRequest.setUrl(channelExecutor.uri() + pathGenerator.path(method, args));
         FormMsgBody formMsgBody = new FormMsgBody();
         Parameter[] parameters=method.getParameters();
         for(int i=0;i<parameters.length;i++){
@@ -108,6 +116,26 @@ public class SimpleClient implements InvocationHandler {
         }
 
 
+    }
+
+
+    public static interface PathGenerator{
+
+        String path(Method method, Object[] args);
+
+    }
+
+    private static class DirectPath implements PathGenerator{
+        private final String path;
+
+        public DirectPath(String path) {
+            this.path = path;
+        }
+
+        @Override
+        public String path(Method method, Object[] args) {
+            return path;
+        }
     }
 
 }
