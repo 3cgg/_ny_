@@ -41,7 +41,7 @@ public class ClientInfoTest {
         MapInfo mapInfo= SimpleClientFactory.factory(MapInfo.class,"/demo/map",simpleChannelExecutor);
 
 
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<1000000;i++){
             LOGGER.debug("AHA : "+i);
             executorService.execute(new Runnable() {
                 @Override
