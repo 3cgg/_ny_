@@ -96,7 +96,7 @@ public class SimpleHttpResponse implements HttpResponse {
         // Write the response, should use embedded IO thread.
         if(ctx.executor().inEventLoop()){
             ctx.writeAndFlush(response);
-            LOGGER.info("completely write response : "+httpRequest.getUrl());
+            LOGGER.debug("completely write response : "+httpRequest.getUrl());
             if(!keepAlive){
                 ctx.close();
             }
@@ -105,7 +105,7 @@ public class SimpleHttpResponse implements HttpResponse {
                 @Override
                 public void run() {
                     ctx.writeAndFlush(response);
-                    LOGGER.info("completely write response : "+httpRequest.getUrl());
+                    LOGGER.debug("completely write response : "+httpRequest.getUrl());
                     if(!keepAlive){
                         ctx.close();
                     }

@@ -12,14 +12,13 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import me.libme.xstream.ConsumerMeta;
+import me.libme.xstream.QueueWindowSourcer;
+import me.libme.xstream.WindowTopology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,31 +40,7 @@ public class SimpleHttpNioChannelServer implements Closeable {
 
 	private final RequestMappingHandler requestMappingHandler;
 
-	private RequestProcessor requestProcessor;
-
-	private ScheduledExecutorService windowExecutor;
-
-	private ExecutorService executor;
-
-	/**
-	 * !important / micro-batch
-	 * @param windowExecutor
-	 * @return
-	 */
-	public SimpleHttpNioChannelServer windowExecutor(ScheduledExecutorService windowExecutor) {
-		this.windowExecutor = windowExecutor;
-		return this;
-	}
-
-	/**
-	 * !important / executing thread pool
-	 * @param executor
-	 * @return
-	 */
-	public SimpleHttpNioChannelServer executor(ExecutorService executor) {
-		this.executor = executor;
-		return this;
-	}
+	private WindowTopology requestProcessor;
 
 	public SimpleHttpNioChannelServer(ServerConfig serverConfig,boolean useSSL,RequestMappingHandler requestMappingHandler) {
 		this.serverConfig = serverConfig;
@@ -78,9 +53,6 @@ public class SimpleHttpNioChannelServer implements Closeable {
 	}
 	
 	public void start() throws Exception{
-
-		Objects.requireNonNull(windowExecutor);
-		Objects.requireNonNull(executor);
 
 		 // Configure SSL.
         final SslContext sslCtx;
@@ -118,13 +90,12 @@ public class SimpleHttpNioChannelServer implements Closeable {
 			LOGGER.info("Open your web browser and navigate to " +
                     (useSSL? "https" : "http") + "://"+serverConfig.getHost()+":" + serverConfig.getPort() + '/');
 
-			requestProcessor=RequestProcessor.builder()
+			requestProcessor=WindowTopology.builder()
+					.setName("Request Handler Topology")
 					.setCount(serverConfig.getWindowCount())
 					.setTime(serverConfig.getWindowTime())
-					.windowExecutor(windowExecutor)
-					.executor(executor)
-					.setQueueHolder(SimpleRequestHandler.queueHolder)
-					.addConsumerProider(()->new RequestConsumer(new ConsumerMeta("Internal Request Dispatcher"),requestMappingHandler))
+					.setSourcer(new QueueWindowSourcer(SimpleRequestHandler.queueHolder.queue()))
+					.addConsumer(new RequestConsumer(new ConsumerMeta("Internal Request Dispatcher"),requestMappingHandler))
 					.build();
 			requestProcessor.start();
 
@@ -141,8 +112,7 @@ public class SimpleHttpNioChannelServer implements Closeable {
 		bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
 		requestProcessor.shutdown();
-		windowExecutor.shutdown();
-		executor.shutdown();
+		requestProcessor.shutdown();
 	}
 	
 }

@@ -21,7 +21,7 @@
 
     <Loggers>
 
-        <Logger name="me.libme" level="info" additivity="false">
+        <Logger name="me.libme" level="debug" additivity="false">
             <AppenderRef ref="appConsole"/>
             <AppenderRef ref="rollingFile"/>
         </Logger>

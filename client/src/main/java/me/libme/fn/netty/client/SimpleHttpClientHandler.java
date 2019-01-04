@@ -78,7 +78,7 @@ public class SimpleHttpClientHandler extends SimpleChannelInboundHandler<FullHtt
     	try {
 			String sequence=simpleResponse.sequenceIdentity();
 			CallPromise callPromise=PROMISE_REPO.get(sequence);
-			LOGGER.info("receive message ["+sequence+" , "+simpleResponse.getHeader(HeaderNames.REQUEST_URL_IDENTITY)+"], in channel : " +ctx.channel());
+			LOGGER.debug("receive message ["+sequence+" , "+simpleResponse.getHeader(HeaderNames.REQUEST_URL_IDENTITY)+"], in channel : " +ctx.channel());
 
 //		ChannelHandler channelHandler=ctx.pipeline().get("releaseChannelHandler");
 //		if(channelHandler==null){

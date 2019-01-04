@@ -72,9 +72,7 @@ public class TestServer {
 
         // START SERVER
         SimpleHttpNioChannelServer channelServer =
-                new SimpleHttpNioChannelServer(serverConfig,dispatcher)
-                .windowExecutor(windowExecutor)
-                .executor(executor);
+                new SimpleHttpNioChannelServer(serverConfig,dispatcher);
         try {
             channelServer.start();
             LOGGER.info("Host ["+serverConfig.getHost()+"] listen on port : "+serverConfig.getPort()+", params : "+ JJSON.get().format(serverConfig));

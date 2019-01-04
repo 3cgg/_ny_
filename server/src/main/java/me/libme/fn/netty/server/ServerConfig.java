@@ -5,7 +5,6 @@ import me.libme.kernel._c._m.JModel;
 
 /**
  * Created by J on 2017/9/7.
- * @see RequestProcessor
  */
 public class ServerConfig implements JModel {
 

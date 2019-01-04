@@ -66,7 +66,7 @@ public abstract class ChannelRunnable {
 			ChannelFuture channelFuture= doRequest(channel,fullHttpRequest);
 			SimpleChannelPool channelPool = channel.attr(NioChannelExecutor.NIO_CHANNEL_EXECUTOR_ATTRIBUTE_KEY).get().getChannelPool();
 			channelPool.release(channel);
-			LOGGER.info("completely send message ["+request.getHeader(HeaderNames.SEQUENCE_IDENTITY)+" ; " +
+			LOGGER.debug("completely send message ["+request.getHeader(HeaderNames.SEQUENCE_IDENTITY)+" ; " +
 					request.getUrl()+" ], release channel to pool : " +channel);
 			return channelFuture;
 		}catch (Throwable e) {
