@@ -3,8 +3,8 @@ package me.libme.fn.netty.server;
 import me.libme.kernel._c.json.JJSON;
 import me.libme.xstream.Compositer;
 import me.libme.xstream.ConsumerMeta;
-import me.libme.xstream.EntryTupe;
-import me.libme.xstream.Tupe;
+import me.libme.xstream.EntryTuple;
+import me.libme.xstream.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +26,14 @@ public class RequestConsumer extends Compositer {
     }
 
     @Override
-    protected void prepare(Tupe tupe) {
-        super.prepare(tupe);
+    protected void prepare(Tuple tuple) {
+        super.prepare(tuple);
     }
 
     @Override
-    protected void doConsume(Tupe tupe) throws Exception {
+    protected void doConsume(Tuple tuple) throws Exception {
         HttpRequest httpRequest=null;
-        Iterator<EntryTupe.Entry> iterator=tupe.iterator();
+        Iterator<EntryTuple.Entry> iterator=tuple.iterator();
         if (iterator.hasNext()) {
             httpRequest=(HttpRequest) iterator.next().getValue();
         }

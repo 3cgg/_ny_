@@ -12,7 +12,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import me.libme.xstream.ConsumerMeta;
-import me.libme.xstream.QueueWindowSourcer;
+import me.libme.xstream.QueueWindowSource;
 import me.libme.xstream.WindowTopology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +94,7 @@ public class SimpleHttpNioChannelServer implements Closeable {
 					.setName("Request Handler Topology")
 					.setCount(serverConfig.getWindowCount())
 					.setTime(serverConfig.getWindowTime())
-					.setSourcer(new QueueWindowSourcer(SimpleRequestHandler.queueHolder.queue()))
+					.setSource(new QueueWindowSource(SimpleRequestHandler.queueHolder.queue()))
 					.addConsumer(new RequestConsumer(new ConsumerMeta("Internal Request Dispatcher"),requestMappingHandler))
 					.build();
 			requestProcessor.start();
